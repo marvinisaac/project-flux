@@ -4,20 +4,20 @@ networks:
       external: true
 
 services:
-    ui:
+    frontend:
         image: nginx:alpine
         depends_on:
-            - ui-npm
+            - frontend-npm
         environment:
             - VIRTUAL_HOST=flux.home
         volumes:
-            - ./ui/dist:/usr/share/nginx/html:ro
+            - ./frontend/dist:/usr/share/nginx/html:ro
 
-    ui-npm:
+    frontend-npm:
         image: node:lts-alpine
         command: "npm run build"
         volumes:
-            - ./ui:/home/node/app
+            - ./frontend:/home/node/app
         working_dir: /home/node/app
 
     backend:
