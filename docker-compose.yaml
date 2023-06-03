@@ -19,3 +19,16 @@ services:
         volumes:
             - ./ui:/home/node/app
         working_dir: /home/node/app
+
+    backend:
+        image: node:dev-lts-alpine
+        build:
+            context: ./backend
+        command: "nodemon server.js"
+        environment:
+            - VIRTUAL_HOST=server-flux.home
+        expose:
+            - 3000
+        volumes:
+            - ./backend:/home/node/app
+        working_dir: /home/node/app
