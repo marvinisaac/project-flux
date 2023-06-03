@@ -5,9 +5,8 @@ A web-based, shared-world RPG based on an over-engineered backend.
 Over-engineered aspects include (but is not limited to):
 - Kubernetes
 - API gateway
-- (true) microservices
+- ***true*** microservices
 - message queue
-- websocket
 
 Some possible microservices include:
 - authentication
@@ -23,7 +22,13 @@ Inspirations:
     - loot system
 - Dungeons and Dragons
     - emergent narrative
+- OpenKore
+    - automated combat
+    - action/combat logs
 
 Timeline of Development
-- Setup a barebones UI + backend utilizing websockets
+- Setup a barebones Vue frontend + Node backend
 - Melee combat
+    - Backend responds with the combat log that the frontend will "play"
+    - Backend records "end" of combat to prevent bypass of fignt "replay"
+    - Combat is limited to x seconds after which the one with lower level withdraws

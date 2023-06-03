@@ -20,13 +20,19 @@ services:
             - ./frontend:/home/node/app
         working_dir: /home/node/app
 
+    api:
+        image: devopsfaith/krakend:2.3.3
+        environment:
+            - VIRTUAL_HOST=server-flux.home
+            - VIRTUAL_PORT=8080
+        volumes:
+            - ./api-gateway/config.json:/etc/krakend/krakend.json
+
     backend:
         image: node:dev-lts-alpine
         build:
             context: ./backend
         command: "nodemon server.js"
-        environment:
-            - VIRTUAL_HOST=server-flux.home
         expose:
             - 3000
         volumes:
