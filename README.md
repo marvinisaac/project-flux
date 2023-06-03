@@ -1,6 +1,6 @@
 # Project Flux
 
-A web-based, shared-world game based on an over-engineered backend.
+A web-based, shared-world RPG based on an over-engineered backend.
 
 Over-engineered aspects include (but is not limited to):
 - Kubernetes
@@ -25,5 +25,5 @@ Inspirations:
     - emergent narrative
 
 Timeline of Development
-- Setup a barebones UI + backend utilizaing websockets
+- Setup a barebones UI + backend utilizing websockets
 - Melee combat
