@@ -27,14 +27,27 @@ services:
             - VIRTUAL_PORT=8080
         volumes:
             - ./api-gateway/config.json:/etc/krakend/krakend.json
+            - ./api-gateway/keys:/keys
 
     backend:
         image: node:dev-lts-alpine
         build:
-            context: ./backend
+            context: .
         command: "nodemon server.js"
         expose:
             - 3000
         volumes:
             - ./backend:/home/node/app
         working_dir: /home/node/app
+
+    login:
+        image: node:dev-lts-alpine
+        build:
+            context: .
+        command: "nodemon server.js"
+        expose:
+            - 3000
+        volumes:
+            - ./login:/home/node/app
+        working_dir: /home/node/app
+
