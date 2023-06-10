@@ -4,13 +4,9 @@ const port = 3000
 
 app.post('/', (req, res) => {
     const data = {
-        'access_token': {
-            // Immediately expire
-            'exp': Math.floor(Date.now() / 1000),
-            'user': 'marvin',
-            'role': 'developer',
-        }
+        'hello': 'world'
     }
+
     res.statusCode = 200
     res.setHeader('Content-Type', 'text/json')
     res.end(JSON.stringify(data))

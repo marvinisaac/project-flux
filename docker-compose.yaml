@@ -21,15 +21,18 @@ services:
         working_dir: /home/node/app
 
     api:
-        image: devopsfaith/krakend:2.3.3
+        # -watch image version is for dev only
+        image: devopsfaith/krakend:2.3.3-watch
+        # command is only needed for -watch image version
+        command: "run --config /etc/krakend/krakend.json"
         environment:
             - VIRTUAL_HOST=server-flux.home
             - VIRTUAL_PORT=8080
         volumes:
-            - ./api-gateway/config.json:/etc/krakend/krakend.json
+            - ./api-gateway:/etc/krakend
             - ./api-gateway/keys:/keys
 
-    backend:
+    combat:
         image: node:dev-lts-alpine
         build:
             context: .
@@ -37,7 +40,7 @@ services:
         expose:
             - 3000
         volumes:
-            - ./backend:/home/node/app
+            - ./combat:/home/node/app
         working_dir: /home/node/app
 
     login:

@@ -2,25 +2,8 @@
     "version": 3,
     "endpoints": [
         {
-            "endpoint": "/backend",
-            "backend": [
-                {
-                    "host": [ "http://backend:3000" ],
-                    "url_pattern": "/"
-                }
-            ]
-        },
-        {
             "endpoint": "/login",
-            "backend": [
-                {
-                    "host": [ "http://login:3000" ],
-                    "url_pattern": "/"
-                }
-            ]
-        },
-        {
-            "endpoint": "/token",
+            "method": "POST",
             "backend": [
                 {
                     "host": [ "http://login:3000" ],
@@ -37,10 +20,11 @@
             }
         },
         {
-            "endpoint": "/protected",
+            "endpoint": "/combat",
+            "method": "POST",
             "backend": [
                 {
-                    "host": [ "http://login:3000" ],
+                    "host": [ "http://combat:3000" ],
                     "url_pattern": "/"
                 }
             ],
