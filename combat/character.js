@@ -1,5 +1,4 @@
 class Character {
-    
     constructor(stats) {
         this.agi = stats.agi || 1
         this.con = stats.con || 1
@@ -9,6 +8,14 @@ class Character {
         this._attackGaugeLimit = 100
         this._attackGauge = 0
         this._damageReceived = 0
+    }
+
+    currentHp() {
+        return this.baseHp - this._damageReceived
+    }
+
+    isDead() {
+        return this.currentHp() <= 0
     }
 
     isTurn() {
@@ -39,7 +46,7 @@ class Character {
     }
 
     get baseHp() {
-        return this.con * 10
+        return this.con
     }
 
     get defense() {
@@ -51,17 +58,25 @@ class Character {
     }
 
     get damage() {
-        return this.str * 5
+        return this.str
     }
 
     getStats() {
         return {
-            'attack-speed': this.attackSpeed,
-            'evasion': this.evasion,
-            'damage': this.damage,
-            'base-hp': this.baseHp,
-            'defense': this.defense,
-            'hit-rate': this.hitRate
+            'base': {
+                'agi': this.agi,
+                'con': this.con,
+                'dex': this.dex,
+                'str': this.str
+            },
+            'derived': {
+                'attack-speed': this.attackSpeed,
+                'evasion': this.evasion,
+                'damage': this.damage,
+                'base-hp': this.baseHp,
+                'defense': this.defense,
+                'hit-rate': this.hitRate
+            }
         }
     }
 }
