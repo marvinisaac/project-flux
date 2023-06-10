@@ -27,7 +27,8 @@ Inspirations:
     - action/combat logs
 
 Timeline of Development
-- Setup a barebones Vue frontend + Node backend
+- :heavy_check_mark: Setup a barebones Vue frontend + Node backend
+- :heavy_check_mark: Secure API endpoints
 - Melee combat
     - Backend responds with the combat log that the frontend will "play"
     - Backend records "end" of combat to prevent bypass of fignt "replay"
