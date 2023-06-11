@@ -21,8 +21,9 @@ app.post('/', (req, res) => {
 
     const TURN_MAX = 1000
     const HIT_RATE_MIN = 0.95
+    const TICK_RATE_MILLISECOND = 100
     let logs = []
-    for (let turn = 1; turn <= TURN_MAX;) {
+    for (let turn = 1; turn <= TURN_MAX; turn++) {
         let baseHp = 0
         let currentHp = 0
         let damage = 0
@@ -64,8 +65,10 @@ app.post('/', (req, res) => {
         }
 
         if (events.length > 0) {
-            logs.push(events)
-            turn++
+            logs.push({
+                'timestamp_ms': turn * TICK_RATE_MILLISECOND,
+                events
+            })
         }
 
         if (player.isDead() || enemy.isDead()) {

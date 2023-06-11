@@ -38,7 +38,15 @@ class Character {
     }
 
     get attackSpeed() {
-        return this.agi
+        // Source: https://irowiki.org/classic/ASPD
+        const MAX_AGI_CALCULATION = 120
+        const MAX_AGI_PLAYER = 110
+        const MAX_ATTACK_PER_SECOND = 10
+        const TICK_RATE_MILLISECOND = 100
+        const agi = this.agi > MAX_AGI_PLAYER ? MAX_AGI_PLAYER : this.agi
+        const attackDelay = MAX_ATTACK_PER_SECOND * (MAX_AGI_CALCULATION - agi)
+        const attackGaugePerTick = Math.pow(TICK_RATE_MILLISECOND, 2) / attackDelay
+        return attackGaugePerTick
     }
 
     get evasion() {
