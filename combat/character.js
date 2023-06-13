@@ -54,7 +54,7 @@ class Character {
     }
 
     get baseHp() {
-        return this.con
+        return this.con * 10
     }
 
     get defense() {

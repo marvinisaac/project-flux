@@ -51,3 +51,8 @@ Ideas
         - Player has full control over character
         - x3 experience and drop rates
         - Nice and fancy GUI (maybe even sprites)
+- Monsters can drop "crystalized essence"
+    - It could be elemental or racial
+    - Weapons could be imbued with elemental essence to either increase damage to that same element or the opposite element (ie fire-imbued weapons get bonus against fire- or water-type monsters)
+    - Armors could be imbued with racial essence to increase resistance to the same race
+- Ashes of Creation's node system

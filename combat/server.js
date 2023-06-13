@@ -19,11 +19,13 @@ app.post('/', (req, res) => {
         'str': Math.round(Math.random() * 100)
     })
 
-    const TURN_MAX = 1000
+    const COMBAT_MAX_SECOND = 60
     const HIT_RATE_MIN = 0.95
     const TICK_RATE_MILLISECOND = 100
+    const TURN_MAX = (COMBAT_MAX_SECOND * 1000) / TICK_RATE_MILLISECOND
     let logs = []
-    for (let turn = 1; turn <= TURN_MAX; turn++) {
+    let turn = 1
+    while (!player.isDead() && !enemy.isDead() && turn < TURN_MAX) {
         let baseHp = 0
         let currentHp = 0
         let damage = 0
@@ -64,16 +66,22 @@ app.post('/', (req, res) => {
             events.push(log.trim())
         }
 
+        // TODO: Add timestamp to time of combat resolution to make it seem like it happens in real-time
         if (events.length > 0) {
             logs.push({
-                'timestamp_ms': turn * TICK_RATE_MILLISECOND,
-                events
+                events,
+                'timestamp_ms': turn * TICK_RATE_MILLISECOND
             })
         }
 
-        if (player.isDead() || enemy.isDead()) {
-            break;
-        }
+        turn++;
+    }
+
+    if (turn === TURN_MAX) {
+        logs.push({
+            'events': [ 'Player and enemy withdraw' ],
+            'timestamp_ms': turn * TICK_RATE_MILLISECOND
+        })
     }
 
     res.statusCode = 200
