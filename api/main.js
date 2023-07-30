@@ -1,9 +1,14 @@
 import Character from './character.js'
 import express from 'express'
 import crypto from 'crypto'
+import { createClient } from "redis"
 
 const app = express()
 const port = 3000
+const redis = createClient({
+    url: "redis://default:password@cache:6379"
+});
+await redis.connect()
 
 app.get('/health', (req, res) => {
     res.statusCode = 200
@@ -111,6 +116,17 @@ app.post('/combat', (req, res) => {
         '_enemy': enemy.getStats(),
         '_player': player.getStats(),
         logs
+    }))
+})
+
+app.get('/world', async (req, res) => {
+    let cacheKey = req.query.object ?? "city"
+    let response = await redis.get(cacheKey)
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'text/json')
+    res.end(JSON.stringify({
+        cacheKey,
+        response: JSON.parse(response)
     }))
 })
 

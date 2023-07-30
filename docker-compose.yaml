@@ -45,3 +45,12 @@ services:
         volumes:
             - ./api:/home/node/app
         working_dir: /home/node/app
+
+    world:
+        image: node:dev-lts-alpine
+        build:
+            context: .
+        command: "npm start"
+        volumes:
+            - ./world:/home/node/app
+        working_dir: /home/node/app
