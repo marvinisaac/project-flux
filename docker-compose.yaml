@@ -4,53 +4,44 @@ networks:
       external: true
 
 services:
-    frontend:
-        image: nginx:alpine
-        depends_on:
-            - frontend-npm
-        environment:
-            - VIRTUAL_HOST=flux.home
-        volumes:
-            - ./frontend/dist:/usr/share/nginx/html:ro
+    # frontend:
+    #     image: nginx:alpine
+    #     depends_on:
+    #         - frontend-npm
+    #     environment:
+    #         - VIRTUAL_HOST=flux.home
+    #     volumes:
+    #         - ./frontend/dist:/usr/share/nginx/html:ro
 
-    frontend-npm:
-        image: node:lts-alpine
-        command: "npm run build"
-        volumes:
-            - ./frontend:/home/node/app
-        working_dir: /home/node/app
+    # frontend-npm:
+    #     image: node:lts-alpine
+    #     command: "npm run build"
+    #     volumes:
+    #         - ./frontend:/home/node/app
+    #     working_dir: /home/node/app
+
+    # api-gateway:
+    #     # -watch image version is for dev only
+    #     image: devopsfaith/krakend:2.3.3-watch
+    #     # command is only needed for -watch image version
+    #     command: "run --config /etc/krakend/krakend.json"
+    #     # environment:
+    #     #     - VIRTUAL_HOST=server-flux.home
+    #     #     - VIRTUAL_PORT=8080
+    #     volumes:
+    #         - ./api-gateway:/etc/krakend
+    #         - ./api-gateway/keys:/keys
 
     api:
-        # -watch image version is for dev only
-        image: devopsfaith/krakend:2.3.3-watch
-        # command is only needed for -watch image version
-        command: "run --config /etc/krakend/krakend.json"
+        image: node:dev-lts-alpine
+        build:
+            context: .
+        command: "npm start"
+        expose:
+            - 3000
         environment:
             - VIRTUAL_HOST=server-flux.home
-            - VIRTUAL_PORT=8080
+            - VIRTUAL_PORT=3000
         volumes:
-            - ./api-gateway:/etc/krakend
-            - ./api-gateway/keys:/keys
-
-    combat:
-        image: node:dev-lts-alpine
-        build:
-            context: .
-        command: "nodemon server.js"
-        expose:
-            - 3000
-        volumes:
-            - ./combat:/home/node/app
+            - ./api:/home/node/app
         working_dir: /home/node/app
-
-    login:
-        image: node:dev-lts-alpine
-        build:
-            context: .
-        command: "nodemon server.js"
-        expose:
-            - 3000
-        volumes:
-            - ./login:/home/node/app
-        working_dir: /home/node/app
-

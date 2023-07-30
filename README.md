@@ -35,6 +35,10 @@ Timeline of Development
     - Combat is limited to x seconds after which the one with lower level withdraws
 
 Ideas
+- The game's most basic action is a "step"
+    - Location distances are measure in steps
+    - Vision is counted in steps
+    - Random events may occur every step
 - Combat has 3 modes, in order of priority:
     - Passive mode
         - Player is online but most combat is automated

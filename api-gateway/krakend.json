@@ -2,12 +2,23 @@
     "version": 3,
     "endpoints": [
         {
+            "endpoint": "/health",
+            "method": "GET",
+            "output_encoding": "no-op",
+            "backend": [
+                {
+                    "encoding": "no-op",
+                    "host": [ "http://api:3000" ],
+                    "url_pattern": "/health"
+                }
+            ]
+        }, {
             "endpoint": "/login",
             "method": "POST",
             "backend": [
                 {
-                    "host": [ "http://login:3000" ],
-                    "url_pattern": "/"
+                    "host": [ "http://api:3000" ],
+                    "url_pattern": "/login"
                 }
             ],
             "extra_config": {
@@ -24,8 +35,8 @@
             "method": "POST",
             "backend": [
                 {
-                    "host": [ "http://combat:3000" ],
-                    "url_pattern": "/"
+                    "host": [ "http://api:3000" ],
+                    "url_pattern": "/combat"
                 }
             ],
             "extra_config": {

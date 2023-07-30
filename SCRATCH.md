@@ -32,3 +32,7 @@
     - Automatic for idle-ish gameplay
 - World constantly shifts (ie quantum fluctuation) so much so that some locations pop in and out of existence seemingly randomly
 - "Bubbles" exists where things are relatively stable, this is where cities, towns, and villages are formed
+
+- The setting is an ever-changing world like Earth
+    - A lot of "quantum anomalies" constantly pop in and out of existence serving as portals to other worlds and planes
+    - Locations are connected by "dust" (from "Golden Compass")
