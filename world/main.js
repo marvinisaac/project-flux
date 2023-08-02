@@ -12,7 +12,7 @@ await redis.connect()
 
 let counter = 0
 let cities = []
-for (let i = 1; i <= 10; i++) {
+for (let i = 1; i <= 5; i++) {
     let city = {
         "name": "",
         "growth_percent": 0,
@@ -80,7 +80,7 @@ cities.forEach(city => {
 })
 fs.writeFileSync('data/history.csv', line + "\n", {flag: "w+"})
 
-while (counter < (3600 * 24 * 30)) {
+while (counter < (3600 * 24 * 90)) {
     main()
 }
 exit(0)
@@ -136,24 +136,20 @@ async function main() {
     });
     counter += 1
     if (counter % 3600 === 0) {
-        console.log((counter / 3600) + " hours")
+        // console.log((counter / 3600) + " hours")
         let line = "Hour " + (counter / 3600) + ","
         cities.forEach(city => {
-            console.log(city.name + " : " + city.population.total)
+            // console.log(city.name + " : " + city.population.total)
             line += city.population.total + ","
 
             // 3% chance of happening
-            // if (3 < roll(100)) {
-            //     city.resources.farmland += 1
-            // } else if (3 < roll(100)) {
-            //     city.resources.farmland -= 1
-            // }
+            if (3 > roll(100)) {
+                city.resources.farmland += crypto.randomInt(-5, 5)
+            }
 
-            // if (5 < roll(100)) {
-            //     city.farming_multiplier += 1
-            // } else if (5 < roll(100)) {
-            //     city.farming_multiplier -= 1
-            // }
+            if (5 > roll(100)) {
+                city.farming_multiplier += crypto.randomInt(0, 10)
+            }
         })
         fs.writeFileSync('data/history.csv', line + "\n", {flag: "a+"})
     }
