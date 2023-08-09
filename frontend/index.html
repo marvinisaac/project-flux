@@ -4,10 +4,79 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
+    <title>Project Flux</title>
+    <style>
+      canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <canvas id="voronoi"></canvas>
+    <!-- <script type="module" src="/src/main.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fabric"></script>
+    <script>
+      const canvas = new fabric.StaticCanvas('voronoi');
+      canvas.setDimensions({
+        width: window.innerWidth - 5,
+        height: window.innerHeight - 5
+      });
+
+      const points = [];
+      for (let i = 0; i < 100; i++) {
+        points.push([
+          Math.round(Math.random() * window.innerWidth),
+          Math.round(Math.random() * window.innerHeight)
+        ]);
+      }
+      const delaunay = d3.Delaunay.from(points);
+      const voronoi = delaunay.voronoi([0, 0, window.innerWidth, window.innerHeight]);
+      // const canvas = document.getElementById("voronoi");
+      // const context = canvas.getContext("2d");
+      // context.lineWidth = 1;
+      // context.strokeStyle = "black";
+      // const voronoiFull = voronoi.render();
+      // context.stroke();
+      // const voronoiPath = new fabric.Path(voronoiFull);
+      // voronoiPath.set({stroke: 'black'});
+      // canvas.add(voronoiPath);
+      points.forEach((point, index) => {
+        let pointArrayArray = voronoi.cellPolygon(index);
+        if (pointArrayArray === null) {
+          return;
+        }
+        let pointArrayObject = [];
+        pointArrayArray.forEach(a => {
+          pointArrayObject.push({
+            "x": a[0],
+            "y": a[1]
+          });
+        });
+        let cell = new fabric.Polyline(pointArrayObject);
+        let red = Math.round(Math.random() * 124);
+        let green = Math.round(Math.random() * 168);
+        let blue = Math.round(Math.random() * 255);
+        let alpha = Math.random();
+        cell.set({
+          fill: `rgba(${red}, ${green}, ${blue}, 1)`,
+          stroke: "white",
+          strokeWidth: 5
+        });
+        canvas.add(cell);
+      });
+
+      // canvas.addEventListener('mousedown', function(event) {
+      //   points.forEach((point, index) => {
+      //     if (voronoi.contains(index, event.offsetX, event.offsetY)) {
+      //       console.log(voronoi.cellPolygon(index));
+      //     }
+      //   });
+      // });
+  
+      </script>
   </body>
 </html>
