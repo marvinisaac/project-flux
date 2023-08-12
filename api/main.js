@@ -2,13 +2,22 @@ import Character from './character.js'
 import express from 'express'
 import crypto from 'crypto'
 import { createClient } from "redis"
+import points from './points.js'
+import cors from 'cors'
 
 const app = express()
+app.use(cors())
 const port = 3000
 const redis = createClient({
     url: "redis://default:password@cache:6379"
 });
 await redis.connect()
+
+app.get('/points', (req, res) => {
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'text/json')
+    res.end(JSON.stringify(points()))
+})
 
 app.get('/health', (req, res) => {
     res.statusCode = 200
