@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Flux</title>
     <style>
+      body {
+        margin: 0;
+      }
       canvas {
         position: fixed;
         top: 0;
@@ -20,63 +23,112 @@
     <script src="https://cdn.jsdelivr.net/npm/d3-delaunay@6"></script>
     <script src="https://cdn.jsdelivr.net/npm/fabric"></script>
     <script>
-      const canvas = new fabric.StaticCanvas('voronoi');
-      canvas.setDimensions({
-        width: window.innerWidth - 5,
-        height: window.innerHeight - 5
-      });
+      (async () => {
+        const points = await getPoints();
+        const cellStatus = Array(points.length).fill(null);
+        const delaunay = d3.Delaunay.from(points);
+        const voronoi = delaunay.voronoi([0, 0, window.innerWidth, window.innerHeight]);
+        
+        const canvas = new fabric.Canvas('voronoi', {
+          height: window.innerHeight,
+          width: window.innerWidth,
+        });
+        canvas.setBackgroundImage('world.png', canvas.renderAll.bind(canvas), {
+          opacity: 0.5,
+          originX: 'left',
+          originY: 'top',
+        });
+        canvas.on('mouse:down', (options) => {
+          const e = options.e;
+          console.log(e.clientX, e.clientY);
+          const index = getCellIndex(e.clientX, e.clientY);
+          switch(cellStatus[index]) {
+            case 'land':
+              fillCell(index, 'blue');
+              cellStatus[index] = 'water';
+              break;
+            case 'water':
+              fillCell(index, 'white');
+              cellStatus[index] = null;
+              break;
+            default:
+              fillCell(index, 'black');
+              cellStatus[index] = 'land';
+              break;
+          }
+        });
 
-      const points = [];
-      for (let i = 0; i < 100; i++) {
-        points.push([
-          Math.round(Math.random() * window.innerWidth),
-          Math.round(Math.random() * window.innerHeight)
-        ]);
-      }
-      const delaunay = d3.Delaunay.from(points);
-      const voronoi = delaunay.voronoi([0, 0, window.innerWidth, window.innerHeight]);
-      // const canvas = document.getElementById("voronoi");
-      // const context = canvas.getContext("2d");
-      // context.lineWidth = 1;
-      // context.strokeStyle = "black";
-      // const voronoiFull = voronoi.render();
-      // context.stroke();
-      // const voronoiPath = new fabric.Path(voronoiFull);
-      // voronoiPath.set({stroke: 'black'});
-      // canvas.add(voronoiPath);
-      points.forEach((point, index) => {
-        let pointArrayArray = voronoi.cellPolygon(index);
-        if (pointArrayArray === null) {
-          return;
+        draw(canvas, voronoi, points);
+
+        async function getPoints() {
+          return fetch("https://server-flux.home/points")
+            .then(response => response.json())
+            .then(points => {
+              return points;
+            });
         }
-        let pointArrayObject = [];
-        pointArrayArray.forEach(a => {
-          pointArrayObject.push({
-            "x": a[0],
-            "y": a[1]
-          });
-        });
-        let cell = new fabric.Polyline(pointArrayObject);
-        let red = Math.round(Math.random() * 124);
-        let green = Math.round(Math.random() * 168);
-        let blue = Math.round(Math.random() * 255);
-        let alpha = Math.random();
-        cell.set({
-          fill: `rgba(${red}, ${green}, ${blue}, 1)`,
-          stroke: "white",
-          strokeWidth: 5
-        });
-        canvas.add(cell);
-      });
 
-      // canvas.addEventListener('mousedown', function(event) {
-      //   points.forEach((point, index) => {
-      //     if (voronoi.contains(index, event.offsetX, event.offsetY)) {
-      //       console.log(voronoi.cellPolygon(index));
-      //     }
-      //   });
-      // });
-  
+        function draw(canvas, voronoi, points) {
+          points.forEach((point, index) => {
+            let pointArrayArray = voronoi.cellPolygon(index);
+            if (pointArrayArray === null) {
+              return;
+            }
+            let pointArrayObject = [];
+            pointArrayArray.forEach(a => {
+              pointArrayObject.push({
+                "x": a[0],
+                "y": a[1]
+              });
+            });
+            let cell = new fabric.Polyline(pointArrayObject);
+            cell.set({
+              fill: 'rgba(255, 255, 255, 0.25)',
+              hoverCursor: 'default',
+              selectable: false,
+              stroke: 'rgba(0, 0, 0, 0.25)',
+              strokeWidth: 1
+            });
+            canvas.add(cell);
+          });
+        }
+
+        function getCellIndex(x, y) {
+          let cellIndex;
+          points.some((point, index) => {
+            if (!voronoi.contains(index, x, y)) {
+              // Skip current cell
+              return false;
+            }
+            cellIndex = index;
+            return true;
+          });
+          return cellIndex;
+        }
+
+        function fillCell(index, color) {
+          let pointArrayArray = voronoi.cellPolygon(index);
+          if (pointArrayArray === null) {
+            return;
+          }
+          let pointArrayObject = [];
+          pointArrayArray.forEach(a => {
+            pointArrayObject.push({
+              "x": a[0],
+              "y": a[1]
+            });
+          });
+          let cell = new fabric.Polyline(pointArrayObject);
+          cell.set({
+            hoverCursor: 'default',
+            fill: color,
+            selectable: false,
+            stroke: color,
+            strokeWidth: 1
+          });
+          canvas.add(cell);
+        }
+      })();
       </script>
   </body>
 </html>
