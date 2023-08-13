@@ -24,72 +24,56 @@
     <script src="https://cdn.jsdelivr.net/npm/fabric"></script>
     <script>
       (async () => {
-        const points = await getPoints();
-        const cellStatus = Array(points.length).fill(null);
+        const cellData = await getCellData();
+        const points = getPoints(cellData);
         const delaunay = d3.Delaunay.from(points);
         const voronoi = delaunay.voronoi([0, 0, window.innerWidth, window.innerHeight]);
         
         const canvas = new fabric.Canvas('voronoi', {
+          backgroundColor: 'white',
           height: window.innerHeight,
           width: window.innerWidth,
         });
-        canvas.setBackgroundImage('world.png', canvas.renderAll.bind(canvas), {
-          opacity: 0.5,
+        canvas.setBackgroundImage('parchment.jpg', canvas.renderAll.bind(canvas), {
+          height: canvas.height,
+          opacity: 1,
           originX: 'left',
           originY: 'top',
+          width: canvas.width,
         });
         canvas.on('mouse:down', (options) => {
           const e = options.e;
-          console.log(e.clientX, e.clientY);
           const index = getCellIndex(e.clientX, e.clientY);
-          switch(cellStatus[index]) {
-            case 'land':
-              fillCell(index, 'blue');
-              cellStatus[index] = 'water';
-              break;
-            case 'water':
-              fillCell(index, 'white');
-              cellStatus[index] = null;
-              break;
-            default:
-              fillCell(index, 'black');
-              cellStatus[index] = 'land';
-              break;
-          }
+          fillCell(index, 'rgba(255, 255, 255, 1)');
         });
 
         draw(canvas, voronoi, points);
 
-        async function getPoints() {
-          return fetch("https://server-flux.home/points")
+        async function getCellData() {
+          return fetch("https://server-flux.home/cells")
             .then(response => response.json())
-            .then(points => {
-              return points;
+            .then(cellData => {
+              return cellData;
             });
         }
 
+        function getPoints(cellData) {
+          let points = [];
+          cellData.forEach((cell) => {
+            points.push(cell.point);
+          });
+          return points;
+        }
+
         function draw(canvas, voronoi, points) {
+          let habitableLandCells = 0;
           points.forEach((point, index) => {
-            let pointArrayArray = voronoi.cellPolygon(index);
-            if (pointArrayArray === null) {
-              return;
+            let cell = cellData[index];
+            if (cell.height >= 20) {
+              fillCell(index, 'rgba(0, 0, 0, 0.5)');
+            } else {
+              fillCell(index, 'rgba(64, 128, 255, 0.5)', 'rgba(64, 128, 255, 0.5)');
             }
-            let pointArrayObject = [];
-            pointArrayArray.forEach(a => {
-              pointArrayObject.push({
-                "x": a[0],
-                "y": a[1]
-              });
-            });
-            let cell = new fabric.Polyline(pointArrayObject);
-            cell.set({
-              fill: 'rgba(255, 255, 255, 0.25)',
-              hoverCursor: 'default',
-              selectable: false,
-              stroke: 'rgba(0, 0, 0, 0.25)',
-              strokeWidth: 1
-            });
-            canvas.add(cell);
           });
         }
 
@@ -106,11 +90,12 @@
           return cellIndex;
         }
 
-        function fillCell(index, color) {
+        function fillCell(index, fill, stroke = false) {
           let pointArrayArray = voronoi.cellPolygon(index);
           if (pointArrayArray === null) {
             return;
           }
+
           let pointArrayObject = [];
           pointArrayArray.forEach(a => {
             pointArrayObject.push({
@@ -121,10 +106,11 @@
           let cell = new fabric.Polyline(pointArrayObject);
           cell.set({
             hoverCursor: 'default',
-            fill: color,
+            fill: fill,
+            opacity: 1,
             selectable: false,
-            stroke: color,
-            strokeWidth: 1
+            stroke: stroke || fill,
+            strokeWidth: 0,
           });
           canvas.add(cell);
         }
