@@ -2,7 +2,7 @@ import Character from './character.js'
 import express from 'express'
 import crypto from 'crypto'
 import { createClient } from "redis"
-import points from './points.js'
+import { getCells } from './cells.js'
 import cors from 'cors'
 
 const app = express()
@@ -13,10 +13,10 @@ const redis = createClient({
 });
 await redis.connect()
 
-app.get('/points', (req, res) => {
+app.get('/cells', (req, res) => {
     res.statusCode = 200
     res.setHeader('Content-Type', 'text/json')
-    res.end(JSON.stringify(points()))
+    res.end(JSON.stringify(getCells()))
 })
 
 app.get('/health', (req, res) => {
@@ -140,19 +140,3 @@ app.get('/world', async (req, res) => {
 })
 
 app.listen(port)
-
-// let counter = 0
-// setInterval(() => {
-// while (true) {
-//     const MAX = Math.pow(2, 48) - 1
-//     const RANDOM = crypto.randomInt(0, MAX)
-//     if (RANDOM.toString().includes('00000000')) {
-//         // console.log(new Date() + ' : ' + RANDOM)
-//         console.log(counter + ' : ' + RANDOM)
-//         counter = 0
-//     } else {
-//         counter++
-//     }
-// }
-// }, 1000 / 64)
-// }, (1000 / 64))
